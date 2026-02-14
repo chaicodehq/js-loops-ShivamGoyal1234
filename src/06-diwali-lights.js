@@ -39,4 +39,33 @@
  */
 export function diwaliLightsPlan(lightStrings, budget) {
   // Your code here
+  if (!Array.isArray(lightStrings) || typeof budget !== 'number' || budget <= 0 || isNaN(budget)) {
+    return { selected: [], totalLength: 0, totalCost: 0 };
+  }
+
+  const rates = {
+    golden: 50,
+    multicolor: 40,
+    white: 30,
+  };
+
+  const selected = [];
+  let totalCost = 0, totalLength = 0;
+
+  for (const light of lightStrings) {
+    if (!light || typeof light.color !== 'string' || typeof light.length !== 'number' || light.length <= 0 || isNaN(light.length)) continue;
+    const rate = rates.hasOwnProperty(light.color) ? rates[light.color] : 35;
+    const cost = light.length * rate;
+    selected.push({ color: light.color, length: light.length, cost });
+    totalCost += cost;
+    totalLength += light.length;
+  }
+
+  while (totalCost > budget && selected.length) {
+    const removed = selected.pop();
+    totalCost -= removed.cost;
+    totalLength -= removed.length;
+  }
+
+  return { selected, totalLength, totalCost };
 }
